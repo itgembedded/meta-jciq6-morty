@@ -1,11 +1,22 @@
-# meta-Q6
-Yocto Project for JCI Q6 Board - Morty Branch
+# meta-jciq6-morty
+Yocto Project for JCI Q6 Board - Morty Branch (v2.2.1)
  
 # Getting started with software for the Q6 Board
  
 Here's some basic info about how to start with YOCTO and the Q6 Board. 
  
-  
+ 
+### 0) If upgrading from Krogoth, you may need to install these additional pkgs
+    If upgrading your environment from Krogoth, Morty requires a few more host pkgs.
+    If these are not already installed on your Host system, please install them as shown.
+
+    sudo apt-get update
+    sudo apt-get install linux-generic-lts-xenial
+    sudo apt-get install python3-software-properties
+    sudo apt-get install gcc-multilib socat
+    sudo apt-get install cpio python python3 
+    sudo apt-get install python3-pip python3-pexpect 
+
 ### 1) Install the repo utility
     mkdir ~/bin
     curl http://commondatastorage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
@@ -51,6 +62,8 @@ Here is a list of 'machine names' for Q6 images. Use the 'machine name' based on
     jciq6
      
 ### Setup and Build Console image
+    Note: if moving from Krogoth, Morty now requires new DISTRO parameter
+
     MACHINE=<machine name> DISTRO=<distro name> source setup-environment build-dir
     bitbake <image>
  
