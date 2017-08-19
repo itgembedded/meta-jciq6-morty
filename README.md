@@ -1,5 +1,7 @@
 # meta-jciq6-morty
-Yocto Project for JCI Q6 Board - Morty Branch (v2.2.1)
+Yocto Project for JCI Q6 Board - Morty Branch (v2.2.2)
+
+Updated to include support for Chromium Browser v52 for the Q6 board
  
 # Getting started with software for the Q6 Board
  
@@ -33,7 +35,7 @@ Here's some basic info about how to start with YOCTO and the Q6 Board.
     cd ~/fsl-community-bsp/
     mkdir -pv .repo/local_manifests/
  
-Copy and paste this into your Linux host machine 
+    Copy and paste this into your Linux terminal to create your local repo manifest
  
     cat > .repo/local_manifests/Q6.xml << EOF
     <?xml version="1.0" encoding="UTF-8"?>
@@ -42,22 +44,44 @@ Copy and paste this into your Linux host machine
       <remote fetch="git://github.com/itgembedded" name="itgembedded"/>
      
       <project remote="itgembedded" revision="morty" name="meta-jciq6-morty" path="sources/meta-jciq6">
-        <copyfile src="jciq6-setup.sh" dest="jciq6-setup.sh"/>
+          <copyfile src="jciq6-setup.sh" dest="jciq6-setup.sh"/>
       </project>
+
+     <project remote="itgembedded" revision="morty" name="meta-browser" path="sources/meta-browser">
+     </project>
+
     </manifest>
     EOF
  
 ### 4) Sync repositories
     repo sync
  
-### 5) Add Q6 meta layer into BSP
+### 5) Add jciq6 and support meta layers into BSP
     source jciq6-setup.sh
  
+### 6) To include chromium in your image build, include these lines in your local.conf file
+    CORE_IMAGE_EXTRA_INSTALL += "chromium libexif"
+    LICENSE_FLAGS_WHITELIST = "commercial"
+
+    If Sato, or other desktop is included, Chromium desktop icon is installed.
+    Frick Demo desktop icon is included to launch Chrome in kiosk mode, directly to Frick demo site.
+
+    Otherwise, execute chromium via it's startup-script, passing params as needed: /usr/bin/google-chrome
+
+### 7) To enlarge usable file system space in SD or CFAST card image
+    By default, this build will add 30% extra "unused" space to the file system partition.
+
+    You can increase usable file system space on your card image by setting these variables in local.conf:
+        IMAGE_ROOTFS_SIZE = (total space allocated/formatted for partition, in KB)
+	IMAGE_ROOTFS_EXTRA_SPACE = (in addition to required file space, in KB, default "0")
+	IMAGE_OVERHEAD_FACTOR = (multiplier, defaults to "1.3")
+	
+
 # Building images
     cd ~/fsl-community-bsp/
  
 ### Currently Supported machines <machine name>
-Here is a list of 'machine names' for Q6 images. Use the 'machine name' based on the board you have:
+    Here is a list of 'machine names' for Q6 images. Use the 'machine name' based on the board you have:
  
     jciq6
      
@@ -67,25 +91,28 @@ Here is a list of 'machine names' for Q6 images. Use the 'machine name' based on
     MACHINE=<machine name> DISTRO=<distro name> source setup-environment build-dir
     bitbake <image>
  
-Example:
+    Example:
  
- 
-    MACHINE=jciq6 DISTRO=fslc-x11 source setup-environment build-jciq6
-    bitbake core-image-sato
+        MACHINE=jciq6 DISTRO=fslc-x11 source setup-environment build-jciq6
+        bitbake core-image-sato
  
 
 # Creating SD card
-Output directories and file names depend on what you build. Following example is based on running 'bitbake core-image-base':
+    Output directories and file names depend on what you build. 
+    The following example is based on running 'bitbake core-image-sato', using /dev/sdb, etc.
  
- 
-    umount /dev/sdb?
-    gunzip -c ~/fsl-community-bsp/build-Q6/tmp/deploy/images/jciq6/core-image-base-jciq6.sdcard.gz > ~/fsl-community-bsp/build-Q6/tmp/deploy/images/jciq6/core-image-base-jciq6.sdcard
-    sudo dd if=~/fsl-community-bsp/build-Q6/tmp/deploy/images/jciq6/core-image-base-jciq6.sdcard of=/dev/sdb bs=1M && sync
-    umount /dev/sdb?
+    sudo umount /dev/sdb2
+    sudo umount /dev/sdb1
+    sudo umount /dev/sdb
+    gunzip -c ~/fsl-community-bsp/build-Q6/tmp/deploy/images/jciq6/core-image-sato-jciq6.sdcard.gz > ~/fsl-community-bsp/build-Q6/tmp/deploy/images/jciq6/core-image-sato-jciq6.sdcard
+    sudo dd if=~/fsl-community-bsp/build-Q6/tmp/deploy/images/jciq6/core-image-sato-jciq6.sdcard of=/dev/sdb bs=1M conv=fdatasync
+    sudo umount /dev/sdb2
+    sudo umount /dev/sdb1
+    sudo eject /dev/sdb
      
 # Testing it on Q6 
 
-To test your SD card, plug in the card and reset the Q6 board (press "Reset" button).  
+To test your SD card, plug in the card and reset the Q6 board (press "Reset" button).
 
 	1) U-Boot will load & execute from the base of the SD Card.
 	2) U-Boot will load & execute optional boot script from SD partition 1 (boot_jciq6.scr)
