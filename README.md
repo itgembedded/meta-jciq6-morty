@@ -25,14 +25,13 @@ Here's some basic info about how to start with YOCTO and the Q6 Board.
     chmod a+x ~/bin/repo
  
 ### 2) Get the YOCTO project
-    cd
     mkdir fsl-community-bsp
     cd fsl-community-bsp
     PATH=${PATH}:~/bin
     repo init -u https://github.com/Freescale/fsl-community-bsp-platform -b morty
  
 ### 3) Add Q6 support - create manifest 
-    cd ~/fsl-community-bsp/
+    (still from fsl-community-bsp directory)
     mkdir -pv .repo/local_manifests/
  
     Copy and paste this into your Linux terminal to create your local repo manifest
@@ -59,26 +58,9 @@ Here's some basic info about how to start with YOCTO and the Q6 Board.
 ### 5) Add jciq6 and support meta layers into BSP
     source jciq6-setup.sh
  
-### 6) To include chromium in your image build, include these lines in your local.conf file
-    CORE_IMAGE_EXTRA_INSTALL += "chromium libexif"
-    LICENSE_FLAGS_WHITELIST = "commercial"
-
-    If Sato, or other desktop is included, Chromium desktop icon is installed.
-    Frick Demo desktop icon is included to launch Chrome in kiosk mode, directly to Frick demo site.
-
-    Otherwise, execute chromium via it's startup-script, passing params as needed: /usr/bin/google-chrome
-
-### 7) To enlarge usable file system space in SD or CFAST card image
-    By default, this build will add 30% extra "unused" space to the file system partition.
-
-    You can increase usable file system space on your card image by setting these variables in local.conf:
-        IMAGE_ROOTFS_SIZE = (total space allocated/formatted for partition, in KB)
-	IMAGE_ROOTFS_EXTRA_SPACE = (in addition to required file space, in KB, default "0")
-	IMAGE_OVERHEAD_FACTOR = (multiplier, defaults to "1.3")
-	
 
 # Building images
-    cd ~/fsl-community-bsp/
+    cd .../fsl-community-bsp/
  
 ### Currently Supported machines <machine name>
     Here is a list of 'machine names' for Q6 images. Use the 'machine name' based on the board you have:
@@ -94,8 +76,31 @@ Here's some basic info about how to start with YOCTO and the Q6 Board.
     Example:
  
         MACHINE=jciq6 DISTRO=fslc-x11 source setup-environment build-jciq6
+	(... make any desired changes to conf/local.conf now...)
         bitbake core-image-sato
  
+### To include chromium in your image build
+    These additions must be added AFTER executing setup-environment but BEFORE bitbake
+
+    Include these lines in your local.conf:
+        CORE_IMAGE_EXTRA_INSTALL += "chromium libexif"
+        LICENSE_FLAGS_WHITELIST = "commercial"
+
+    If Sato, or other desktop is included, Chromium desktop icon is installed.
+    Frick Demo desktop icon is included to launch Chrome in kiosk mode, directly to Frick demo site.
+    Otherwise, execute chromium via it's startup-script, passing params as needed: /usr/bin/google-chrome <params>
+
+### To enlarge usable file system space in SD or CFAST card image
+    By default, this build will add 30% extra "unused" space to the file system partition.
+
+    You can increase usable file system space on your card image by setting these variables in local.conf:
+        IMAGE_ROOTFS_SIZE = (total space allocated/formatted for partition, in KB)
+	IMAGE_ROOTFS_EXTRA_SPACE = (in addition to required file space, in KB, default "0")
+	IMAGE_OVERHEAD_FACTOR = (multiplier, defaults to "1.3")
+	
+    For example, to force slightly smaller that 4GB total rootfs partition size, add:
+	IMAGE_ROOTFS_SIZE = "4000000"
+
 
 # Creating SD card
     Output directories and file names depend on what you build. 
