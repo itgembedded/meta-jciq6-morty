@@ -47,7 +47,7 @@ Here's some basic info about how to start with YOCTO and the Q6 Board.
           <copyfile src="jciq6-setup.sh" dest="jciq6-setup.sh"/>
       </project>
 
-     <project remote="itgembedded" revision="morty" name="meta-browser" path="sources/meta-browser">
+     <project remote="itgembedded" revision="morty" name="Q6-meta-browser" path="sources/meta-browser">
      </project>
 
     </manifest>
