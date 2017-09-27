@@ -29,7 +29,7 @@ SRCBRANCH = "morty"
 SRC_URI = "git://github.com/itgembedded/jciq6-uboot-v2016.11.git;branch=${SRCBRANCH}"
 
 #SRCREV is the commit number, must be always changed for a new version
-SRCREV = "8ab9a91109380d3332653b07194100edf31e5f2a"
+SRCREV = "b66a3b9f8a9e6b735667dcc03c6a5a578205808c"
 
 S = "${WORKDIR}/git"
 
