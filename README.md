@@ -65,7 +65,8 @@ Here's some basic info about how to start with YOCTO and the Q6 Board.
 ### Currently Supported machines <machine name>
     Here is a list of 'machine names' for Q6 images. Use the 'machine name' based on the board you have:
  
-    jciq6
+    jciq6  (for i.MX6Q)
+    jciq6p (for i.MX6Q Plus)
      
 ### Setup and Build Console image
     Note: if moving from Krogoth, Morty now requires new DISTRO parameter
